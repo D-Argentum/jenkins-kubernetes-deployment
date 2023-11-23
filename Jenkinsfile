@@ -8,13 +8,6 @@ pipeline {
   agent any
 
   stages {
-
-    stage('Checkout Source') {
-      steps {
-       git 'https://github.com/D-Argentum/jenkins-kubernetes-deployment.git'
-      }
-    }
-
     stage('Build image') {
       steps{
         script {
