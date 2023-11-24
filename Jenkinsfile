@@ -1,42 +1,26 @@
 pipeline {
-
-  environment {
-    dockerimagename = "dargentum/react-app"
-    dockerImage = ""
-  }
-
   agent any
-
+    
+  tools {nodejs "node"}
+    
   stages {
-    stage('Build image') {
-      steps{
-        script {
-          dockerImage = docker.build dockerimagename
-        }
-      }
-    }
-
-    stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhub-credentials'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
-          }
-        }
-      }
-    }
-
-    stage('Deploying React.js container to Kubernetes') {
+        
+    stage('Cloning Git') {
       steps {
-        script {
-          kubernetesDeploy(configs: "deployment.yaml", "service.yaml")
-        }
+        git 'https://github.com/andreipope/HelloWorld'
       }
     }
-
+        
+    stage('Install dependencies') {
+      steps {
+        sh 'npm install'
+      }
+    }
+     
+    stage('Test') {
+      steps {
+         sh 'npm test'
+      }
+    }      
   }
-
 }
